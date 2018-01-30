@@ -1,0 +1,140 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Login</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+  {% block javascript %}
+<script type="text/javascript">
+    $(document).ready(function () {
+            $('#form-add-bug').submit(function (event) {
+              event.preventDefault();
+              $.ajax({
+                  type:'POST',
+                  url: "/bugapp/add_ui_bug",
+                  async: 'true',
+                  data: {bugid: $('#bugid').val(), 
+                  desc:$('#desc').val(),
+                  'csrfmiddlewaretoken': '{{csrf_token}}'},   
+                  success: function(data) {
+                      alert(data)
+                  },   
+                });
+              // event.preventDefault();
+              // // alert('data')
+              return false;
+            });
+
+            $('#form-delete-bug').submit(function (event) {
+              event.preventDefault();
+              $.ajax({
+                  type:'POST',
+                  url: "/bugapp/deletebug",
+                  async: 'true',
+                  data: {bugid: $('#del_bugid').val(),
+                  'csrfmiddlewaretoken': '{{csrf_token}}'},   
+                  success: function(data) {
+                      alert(data)
+                  },   
+                });
+              // event.preventDefault();
+              // // alert('data')
+              return false;
+            });
+        });
+</script>
+{% endblock  %}
+  <div class="container">
+     <div class="panel-group">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h4 class="panel-title">
+            <a data-toggle="collapse" href="#collapse1">Add Bug</a>
+          </h4>
+        </div>
+        <div id="collapse1" class="panel-collapse collapse">
+          <form class="form-horizontal" method="post" id="form-add-bug"> <!--  action="/bugapp/addbug/" -->
+            {% csrf_token %}
+            <div class="form-group">
+              <label class="control-label col-sm-2" for="bugid">Bug Id:</label>
+              <div class="col-sm-6">
+                <input type="text" class="form-control" id="bugid" placeholder="Enter Bug Id" name="bugid">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="control-label col-sm-2" for="desc">Description:</label>
+              <div class="col-sm-6">
+                <textarea class="form-control" rows="3" id="desc" placeholder="Enter Description" name="desc"></textarea> 
+
+              </div>
+            </div>
+            <div class="form-group">        
+              <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-default">Submit</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Delete -->
+    <div class="panel-group">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h4 class="panel-title">
+            <a data-toggle="collapse" href="#collapse2">Delete</a>
+          </h4>
+        </div>
+        <div id="collapse2" class="panel-collapse collapse">
+          <form class="form-horizontal" method="post" id="form-delete-bug"> <!--  action="/bugapp/addbug/" -->
+            {% csrf_token %}
+            <div class="form-group">
+              <label class="control-label col-sm-2" for="bugid">Bug Id:</label>
+              <div class="col-sm-6">
+                <input type="text" class="form-control" id="del_bugid" placeholder="Enter Bug Id" name="del_bugid">
+              </div>
+            </div>
+            <div class="form-group">        
+              <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-default">Delete</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel-group">
+      <div class="panel panel-default">
+        <div class="panel-heading">Bugs</div>
+        <div class="panel-body">
+          <table class="table table-bordered" id="_appendHere">
+            <thead>
+            <tr>
+              <th>ID</th>
+              <th>Bug ID</th>
+              <th>Description</th>
+            </tr>
+            {% for bug in bugs %}
+              <tbody>
+                <tr>
+                <td> {{ bug.id }} </td>
+                <td> {{ bug.bugId }} </td> 
+                <td> {{ bug.desc }} </td>
+              </tr>
+            </tbody>
+            {% endfor %}
+          </table>
+        </div>
+      </div>
+    </div>
+</div>
+</body>
+</html>
