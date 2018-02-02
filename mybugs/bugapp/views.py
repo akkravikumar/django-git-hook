@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.http import JsonResponse
-from .models import Bugs
+from .models import Bugs, User
 import sys
 import os
 import subprocess
@@ -14,11 +14,36 @@ def index(request):
 	return HttpResponse("Index method called")
 
 def indexhome(request):
-	try:
-		bugs = Bugs.objects.all()
-	except Bugs.DoesNotExist:
-		raise Http404("Bugs does not exist")
-	return render(request, 'bugs/index.html', {'bugs':bugs})
+	context = {'username':''}
+	return render(request, 'bugs/login_auth.html', context)
+	# try:
+	# 	bugs = Bugs.objects.all()
+	# except Bugs.DoesNotExist:
+	# 	raise Http404("Bugs does not exist")
+	# return render(request, 'bugs/index.html', {'bugs':bugs})
+
+def authenticate(request):
+	if request.method == 'POST':
+		user = request.POST.get('email', None)
+		pwd = request.POST.get('pwd', None)
+		checkUser = User.objects.filter(username=user)
+		if checkUser:
+			isSuccess = User.objects.filter(password=pwd)
+			if isSuccess:
+				try:
+					bugs = Bugs.objects.all()
+				except Bugs.DoesNotExist:
+					raise Http404("Bugs does not exist")
+				return render(request, 'bugs/index.html', {'bugs':bugs})
+			else:
+				return HttpResponse("Invalid password, try again")
+		else:
+			return HttpResponse("User not found")
+	# 	bData = Bugs(bugId=bugNumber, desc=bugDescription)
+	# 	bData.save()
+	# 	return HttpResponse("Success! Please refresh the page.")
+	else:
+		return HttpResponse("Request method is not a POST")
 
 def addUiBug(request):
 	if request.method == 'POST':
